@@ -1,0 +1,25 @@
+Flask==3.0.2
+Flask-Login==0.6.3
+Flask-Caching==2.1.0
+Werkzeug==3.0.1
+
+requests==2.31.0
+psutil==5.9.8
+
+python-dotenv==1.0.1
+
+# SQLite ORM (optional but useful)
+SQLAlchemy==2.0.23
+
+# Logging & Parsing
+python-dateutil==2.8.2
+simplejson==3.19.2
+
+# For Cowrie-style log parsing (JSON logs)
+ujson==5.9.0
+
+# Security utilities
+itsdangerous==2.1.2
+
+# If you use Jinja2 templates explicitly
+Jinja2==3.1.3
