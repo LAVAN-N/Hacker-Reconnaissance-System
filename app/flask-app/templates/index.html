@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Hacker Reconnaissance System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Light Theme (Default) */
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #000000;
+            --navbar-bg: #343a40;
+            --navbar-text: #ffffff;
+            --header-bg: #77c0ff;
+            --header-text: #ffffff;
+            --card-bg: #ffffff;
+            --card-text: #000000;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --navbar-bg: #000000;
+            --navbar-text: #ffffff;
+            --header-bg: #77c0ff;
+            --header-text: #ffffff;
+            --card-bg: #2d2d2d;
+            --card-text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Arial', sans-serif;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        .navbar {
+            background-color: var(--navbar-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.5s;
+        }
+
+        .navbar-brand, .nav-link {
+            color: var(--navbar-text) !important;
+            transition: color 0.5s;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+	    margin-left:10px;
+            font-weight: bold;
+        }
+
+        .dashboard-header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 100px 20px;
+            text-align: center;
+            margin-bottom: 0;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        .dashboard-header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: fadeInDown 1s;
+        }
+
+        .dashboard-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            margin-left: 10px;
+            color: var(--navbar-text);
+            transition: opacity 0.3s;
+        }
+
+        .theme-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .system-status {
+            margin-top: 40px;
+            text-align: center;
+            animation: fadeIn 2s;
+        }
+
+        .system-status h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .status-card {
+            background-color: var(--card-bg);
+            color: var(--card-text);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.5s, color 0.5s, transform 0.3s;
+            cursor: pointer;
+            text-align: center;
+            height: 200px; /* Fixed height for all cards */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .status-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .status-card p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body data-theme="light"> <!-- Default theme set to light -->
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Hacker Reconnaissance System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('view_reports') }}">Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('system_configuration') }}">System</a>
+                    </li>
+		    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('threat_report') }}">Threat Intel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('real_time_monitoring') }}">Monitor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link theme-toggle" onclick="toggleTheme()">
+                            <i id="theme-icon" class="fas fa-moon"></i>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1>Welcome!! Admin🔥!</h1>
+        <p>Monitor and analyze recent attacks on your honeypot system🤖  </p>
+    </div>
+
+    <!-- System Status Section -->
+    <div class="system-status">
+        <h2>System Status</h2>
+        <div class="card-grid">
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('server')">
+                <i class="fas fa-server"></i>
+                <h3>Server Status</h3>
+                <p id="server-status">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('security')">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Security Status</h3>
+                <p id="security-status">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('network')">
+                <i class="fas fa-network-wired"></i>
+                <h3>Network Status</h3>
+                <p id="network-status">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('cpu')">
+                <i class="fas fa-microchip"></i>
+                <h3>CPU Usage</h3>
+                <p id="cpu-usage">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('memory')">
+                <i class="fas fa-memory"></i>
+                <h3>Memory Usage</h3>
+                <p id="memory-usage">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('disk')">
+                <i class="fas fa-hdd"></i>
+                <h3>Disk Usage</h3>
+                <p id="disk-usage">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('uptime')">
+                <i class="fas fa-clock"></i>
+                <h3>Uptime</h3>
+                <p id="uptime">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('network-traffic')">
+                <i class="fas fa-wifi"></i>
+                <h3>Network Traffic</h3>
+                <p id="network-traffic">Loading...</p>
+            </div>
+            <div class="status-card animate__animated animate__fadeIn" onclick="showDetails('active-processes')">
+                <i class="fas fa-tasks"></i>
+                <h3>Active Processes</h3>
+                <p id="active-processes">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- Theme Toggle Script -->
+    <script>
+        // Function to toggle between dark and light themes
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        }
+    </script>
+    <!-- System Status Script -->
+    <script>
+        // Fetch system status from the backend API
+        async function fetchSystemStatus() {
+            try {
+                const response = await fetch('/api/system-status');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Error fetching system status:", error);
+                return null;
+            }
+        }
+
+        // Format uptime in a human-readable format
+        function formatUptime(seconds) {
+            const days = Math.floor(seconds / (3600 * 24));
+            const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            return `${days}d ${hours}h ${minutes}m`;
+        }
+
+        // Format network traffic in a human-readable format
+        function formatNetworkTraffic(bytes) {
+            const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            let size = bytes;
+            let unitIndex = 0;
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+            }
+            return `${size.toFixed(2)} ${units[unitIndex]}`;
+        }
+
+        // Update system status on the page
+        async function updateSystemStatus() {
+            const status = await fetchSystemStatus();
+            if (status) {
+                document.getElementById('server-status').textContent = status.server;
+                document.getElementById('security-status').textContent = status.security;
+                document.getElementById('network-status').textContent = status.network;
+                document.getElementById('cpu-usage').textContent = `${status.cpu_usage}%`;
+                document.getElementById('memory-usage').textContent = `${status.memory_usage}%`;
+                document.getElementById('disk-usage').textContent = `${status.disk_usage}%`;
+                document.getElementById('uptime').textContent = formatUptime(status.uptime);
+                document.getElementById('network-traffic').textContent = `Sent: ${formatNetworkTraffic(status.network_traffic.sent)}\nReceived: ${formatNetworkTraffic(status.network_traffic.received)}`;
+                document.getElementById('active-processes').textContent = status.active_processes;
+            }
+        }
+
+        // Show details for a specific status card
+        function showDetails(type) {
+            const status = {
+                server: document.getElementById('server-status').textContent,
+                security: document.getElementById('security-status').textContent,
+                network: document.getElementById('network-status').textContent,
+                cpu: document.getElementById('cpu-usage').textContent,
+                memory: document.getElementById('memory-usage').textContent,
+                disk: document.getElementById('disk-usage').textContent,
+                uptime: document.getElementById('uptime').textContent,
+                network_traffic: document.getElementById('network-traffic').textContent,
+                active_processes: document.getElementById('active-processes').textContent,
+            };
+            alert(`Details for ${type}:\n${status[type]}`);
+        }
+
+        // Update system status every 5 seconds
+        setInterval(updateSystemStatus, 5000);
+        updateSystemStatus(); // Initial call
+    </script>
+</body>
+</html>

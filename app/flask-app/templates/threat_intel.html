@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Intelligence Report</title>
+    <style>
+	body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+.chart-container {
+    width: 50%;
+    margin: 20px auto;
+}
+
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #2c3e50;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+.high-risk {
+    color: red;
+    font-weight: bold;
+}
+
+.low-risk {
+    color: green;
+    font-weight: bold;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Threat Intelligence Reports</h1>
+
+    <div class="chart-container">
+        <canvas id="riskChart"></canvas>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>Abuse Score</th>
+                <th>Total Reports</th>
+                <th>Threat Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for threat in threat_data %}
+            <tr>
+                <td>{{ threat["IP"] }}</td>
+                <td>{{ threat["Abuse Confidence"] }}</td>
+                <td>{{ threat["Total Reports"] }}</td>
+                <td class="{% if threat['Threat Level'] == '⚠️ High' %}high-risk{% else %}low-risk{% endif %}">
+                    {{ threat["Threat Level"] }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        // Render the pie chart
+        var riskCtx = document.getElementById('riskChart').getContext('2d');
+        var riskData = {
+            labels: ["High Risk", "Low Risk"],
+            datasets: [{
+                label: 'Threat Levels',
+                data: [
+                    {{ threat_data | selectattr('Threat Level', 'equalto', '⚠️ High') | list | length }},
+                    {{ threat_data | selectattr('Threat Level', 'equalto', '✅ Low') | list | length }}
+                ],
+                backgroundColor: ['rgba(255, 0, 0, 0.6)', 'rgba(0, 255, 0, 0.6)'],
+            }]
+        };
+
+        new Chart(riskCtx, { type: 'pie', data: riskData });
+    </script>
+</body>
+</html>

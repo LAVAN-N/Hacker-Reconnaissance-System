@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Monitoring</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-Time Monitoring</h1>
+        <div id="real-time-data">
+            <p>Waiting for data...</p>
+        </div>
+    </div>
+    <script>
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to real-time monitoring.');
+            socket.emit('request_update');
+        });
+
+        socket.on('update', (data) => {
+            const realTimeData = document.getElementById('real-time-data');
+            realTimeData.innerHTML = `
+                <p><strong>CPU Usage:</strong> ${data.cpu_usage}%</p>
+                <p><strong>Memory Usage:</strong> ${data.memory_usage}%</p>
+                <h3>Recent Attacks</h3>
+                <ul>
+                    ${data.attacks.map(attack => `
+                        <li>IP: ${attack.ip}, Tool: ${attack.tool}, Time: ${new Date(attack.timestamp * 1000).toLocaleString()}</li>
+                    `).join('')}
+                </ul>
+            `;
+        });
+    </script>
+</body>
+</html>

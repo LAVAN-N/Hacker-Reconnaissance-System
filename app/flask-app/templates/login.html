@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}{% block content %}
+<style>
+.flash-message {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.flash-message.success {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.flash-message.danger {
+  background-color: #FF5733;
+  color: white;
+}
+</style>
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="col-md-4">
+        <h3 class="text-center">Admin Login</h3>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+	  {% if messages %}
+		{% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+	   {% endif %}
+	  {% endwith %}
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+    </div>
+</div>
+<script>
+  setTimeout(() => {
+    document.querySelectorAll('.flash-message').forEach(msg => msg.style.display = 'none');
+  }, 3000); // Hides messages after 3 seconds
+</script>
+{% endblock %}

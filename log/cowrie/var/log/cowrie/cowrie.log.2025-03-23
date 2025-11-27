@@ -1,0 +1,31 @@
+2025-03-23T13:25:38.658830Z [-] Reading configuration from ['/home/cowrie/cowrie/etc/cowrie.cfg.dist']
+2025-03-23T13:25:39.130489Z [-] Python Version 3.9.5 (default, Nov 23 2021, 15:27:38) [GCC 9.3.0]
+2025-03-23T13:25:39.130561Z [-] Twisted Version 24.11.0
+2025-03-23T13:25:39.130577Z [-] Cowrie Version 2.6.1
+2025-03-23T13:25:39.134273Z [-] Loaded output engine: jsonlog
+2025-03-23T13:25:39.136068Z [twisted.scripts._twistd_unix.UnixAppLogger#info] twistd 24.11.0 (/home/cowrie/cowrie/cowrie-env/bin/python3 3.9.5) starting up.
+2025-03-23T13:25:39.136231Z [twisted.scripts._twistd_unix.UnixAppLogger#info] reactor class: twisted.internet.epollreactor.EPollReactor.
+2025-03-23T13:25:39.149633Z [-] CowrieSSHFactory starting on 2222
+2025-03-23T13:25:39.150784Z [cowrie.ssh.factory.CowrieSSHFactory#info] Starting factory <cowrie.ssh.factory.CowrieSSHFactory object at 0x7fb66a71c190>
+2025-03-23T13:25:39.218772Z [-] Ready to accept SSH connections
+2025-03-23T13:26:38.696133Z [cowrie.ssh.factory.CowrieSSHFactory] New connection: 103.21.78.195:40480 (10.128.0.3:2222) [session: bfa58a652203]
+2025-03-23T13:26:38.698370Z [HoneyPotSSHTransport,0,103.21.78.195] Remote SSH version: SSH-2.0-PuTTY_Release_0.82
+2025-03-23T13:26:38.979474Z [HoneyPotSSHTransport,0,103.21.78.195] SSH client hassh fingerprint: f17a3d94ddc11da7caa29e58de92b0d4
+2025-03-23T13:26:38.981724Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] kex alg=b'curve25519-sha256' key alg=b'ssh-ed25519'
+2025-03-23T13:26:38.982027Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] outgoing: b'aes256-ctr' b'hmac-sha2-256' b'none'
+2025-03-23T13:26:38.982234Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] incoming: b'aes256-ctr' b'hmac-sha2-256' b'none'
+2025-03-23T13:26:39.252068Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] NEW KEYS
+2025-03-23T13:26:39.252979Z [cowrie.ssh.transport.HoneyPotSSHTransport#debug] starting service b'ssh-userauth'
+2025-03-23T13:26:52.180999Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'admin' trying auth b'none'
+2025-03-23T13:26:56.542611Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'admin' trying auth b'password'
+2025-03-23T13:26:56.543526Z [HoneyPotSSHTransport,0,103.21.78.195] Could not read etc/userdb.txt, default database activated
+2025-03-23T13:26:56.544248Z [HoneyPotSSHTransport,0,103.21.78.195] login attempt [b'admin'/b'Hello123'] failed
+2025-03-23T13:26:57.546480Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] b'admin' failed auth b'password'
+2025-03-23T13:26:57.547013Z [cowrie.ssh.userauth.HoneyPotSSHUserAuthServer#debug] unauthorized login: ()
+2025-03-23T13:27:09.365849Z [cowrie.ssh.transport.HoneyPotSSHTransport#info] connection lost
+2025-03-23T13:27:09.366276Z [HoneyPotSSHTransport,0,103.21.78.195] Connection lost after 30.7 seconds
+2025-03-23T13:28:30.446226Z [twisted.internet.base#info] Received SIGTERM, shutting down.
+2025-03-23T13:28:30.447380Z [-] (TCP Port 2222 Closed)
+2025-03-23T13:28:30.447680Z [cowrie.ssh.factory.CowrieSSHFactory#info] Stopping factory <cowrie.ssh.factory.CowrieSSHFactory object at 0x7fb66a71c190>
+2025-03-23T13:28:30.448040Z [twisted.internet.base#info] Main loop terminated.
+2025-03-23T13:28:30.448451Z [twisted.scripts._twistd_unix.UnixAppLogger#info] Server Shut Down.

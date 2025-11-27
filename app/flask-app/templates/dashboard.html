@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+     <title>Hacker Reconnaissance Dashboard</title>
+     <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0d1117;
+            color: white;
+	    bottom-padding:20px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+	    margin-bottom: 15px;
+	             
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 24px;
+            color: #ffcc00;
+            transition: 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.2);
+        }
+
+        h1 {
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            width: 80%;
+            margin: 0 auto 30px;
+            background: #161b22;
+            padding: 5px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(255, 255, 0, 0.2);
+        }
+
+        .table-container {
+            width: 90%;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        .search-box {
+            width: 40%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ffcc00;
+            background-color: #161b22;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #161b22;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 100, 255, 0.3);
+            transition: background 0.3s;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #ffcc00;
+            color: black;
+        }
+
+        tr:nth-child(even) {
+            background-color: #1f2a37;
+        }
+
+        tr:hover {
+            background: #26408b;
+            color: white;
+            transition: 0.3s;
+        }
+
+        /* Light Mode */
+        .light-mode {
+            background-color: white;
+            color: black;
+        }
+
+        .light-mode .chart-container {
+            background: #f0f0f0;
+            color: black;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .light-mode table {
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-mode th {
+            background: #ffcc00;
+            color: black;
+        }
+
+        .light-mode tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+
+        .light-mode tr:hover {
+            background: #ffe680;
+            color: black;
+        }
+
+        .light-mode .search-box {
+            background-color: #f0f0f0;
+            color: black;
+        }
+
+        .light-mode .theme-toggle {
+            color: #26408b;
+        }
+	.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns, side by side */
+    gap: 20px; /* Space between charts */
+    width: 80%;
+    margin: 0 auto 30px;
+}
+
+.chart-container {
+    background: #161b22;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(255, 255, 0, 0.2);
+    height: 400px; /* Set a fixed height for consistency */
+}
+ #geoMap {
+            height: 400px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        #pieChartContainer {
+            width: 35%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #fff;
+        }
+/* Light mode adjustments */
+.light-mode .chart-container {
+    background: #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .chart-grid {
+        grid-template-columns: 1fr; /* Stack charts vertically on smaller screens */
+        width: 100%;
+    }
+}
+
+        @media (max-width: 768px) {
+            .chart-container, .table-container {
+                width: 100%;
+            }
+            .search-box {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toggle-container">
+        <h1 style="margin-left:30%">Hacker Reconnaissance Dashboard</h1>
+        <span class="theme-toggle" style="margin-right:3%" onclick="toggleTheme()">🌙️</span>
+    </div>
+    <div class="chart-grid">
+    <div class="geoMap">
+        <div id="geoMap"style="height: 400px; width: 100%;"></div>
+    </div>
+    <div class="pieChartConatiner">
+        <canvas id="pieChart"></canvas>
+    </div>
+    </div>
+    
+    <input type="text" class="search-box" id="searchInput" onkeyup="filterTable()" placeholder="Search by IP, country, or city...">
+
+    <div class="table-container">
+       {% if attackers %}
+	 <table id="attackTable">
+            <thead>
+                <tr> <th>IP Address</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>ISP</th>
+                <th>Domain</th>
+		<th>Usage Type</th>
+		<th>Abuse Confidence Score</th>		
+                <th>Total Reports</th>
+                <th>Last Reported</th>
+                <th>Tor User </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attacker in attackers %}
+                <tr> <td>{{ attacker["IP"] }}</td>
+                <td>{{ attacker["Country"] }}</td>
+                <td>{{ attacker["City"] }}</td>
+                <td>{{ attacker["ISP"] }}</td>
+		<td>{{ attacker["Domain"] }}</td>
+		<td>{{ attacker["Usage Type"] }}</td>
+                <td>{{ attacker["Abuse Confidence"] }}</td>
+                <td>{{ attacker["Total Reports"] }}</td>
+                <td>{{ attacker["Last Reported"] }}</td>
+                <td>{{ attacker["Tor User"] }}</td>
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>{% else %}
+        <p class="no-data">No attack data available.</p>
+    {% endif %}
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet Choropleth Plugin -->
+    <script src="https://unpkg.com/leaflet-choropleth@1.1.4/dist/choropleth.js"></script>
+    <script>
+    // Initialize the Geo Map
+    var map = L.map('geoMap').setView([0, 0], 2); // Default view (world map)
+
+    // Add a tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    console.log("Tile layer added");
+
+    // Parse the attackers data from the template
+    var attackers = JSON.parse('{{ attackers | tojson | safe }}');
+    console.log("Attackers data:", attackers); // Debugging
+
+    // Geocoding API (OpenCage Geocoder)
+    const apiKey = '922d25b6785a49a480830ee84a4438a8'; // Replace with your OpenCage API key
+    const geocoderUrl = `https://api.opencagedata.com/geocode/v1/json?key=${apiKey}&q=`;
+
+    // Function to geocode a city and add a marker
+    function geocodeCity(city, attacker) {
+        fetch(`${geocoderUrl}${encodeURIComponent(city)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.results && data.results.length > 0) {
+                    const { lat, lng } = data.results[0].geometry; // Get latitude and longitude
+
+                    // Create a popup with detailed information
+                    const popupContent = `
+                        <b>City:</b> ${city}<br>
+                        <b>Country:</b> ${attacker["Country"] || "N/A"}<br>
+                        <b>IP:</b> ${attacker["IP"] || "N/A"}<br>
+                        <b>ISP:</b> ${attacker["ISP"] || "N/A"}<br>
+                        <b>Abuse Confidence:</b> ${attacker["Abuse Confidence"] || "N/A"}<br>
+                        <b>Total Reports:</b> ${attacker["Total Reports"] || 0}
+                    `;
+
+                    // Add a marker for the city
+                    L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup(popupContent);
+                } else {
+                    console.warn(`Could not geocode city: ${city}`);
+                }
+            })
+            .catch(error => console.error("Geocoding error:", error));
+    }
+
+    // Add markers for each attacker
+    attackers.forEach(attacker => {
+        const city = attacker["City"];
+        if (city) {
+            geocodeCity(city, attacker); // Geocode the city and add a marker
+        }
+    });
+    
+    // Prepare data for the Pie Chart (Total Reports by Country)
+    var countryReports = {};
+    attackers.forEach(attacker => {
+        const country = attacker["City"];
+        const reports = attacker["Total Reports"] || 0;
+        if (country) {
+            countryReports[country] = (countryReports[country] || 0) + reports;
+        }
+    });
+
+    console.log("Country Reports:", countryReports);
+    // Function to generate an array of unique colors using HSL
+    function generateColors(count) {
+        const colors = [];
+        for (let i = 0; i < count; i++) {
+            const hue = (i * 360) / count; // Distribute hues evenly
+            colors.push(`hsl(${hue}, 70%, 50%)`); // Use HSL for vibrant colors
+        }
+        return colors;
+    }
+    const labels = Object.keys(countryReports);
+    const values = Object.values(countryReports);
+    
+    // Render the Pie Chart
+    if (labels.length === 1) {
+    // For single value, show as full donut
+    var pieChart = new Chart(document.getElementById('pieChart'), {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: [100], // 100%
+                backgroundColor: generateColors(1),
+                hoverBackgroundColor: generateColors(1)
+            }]
+        },
+        options: {
+            cutout: '0%', // Makes it a donut
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: "white"
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${labels[0]}: ${values[0]}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+} else {
+    var pieChart = new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(countryReports),
+            datasets: [{
+                data: Object.values(countryReports),
+                backgroundColor: generateColors(Object.keys(countryReports).length),
+                hoverBackgroundColor: generateColors(Object.keys(countryReports).length)
+		
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: "white" // Default for dark mode
+                    }
+                }
+            }
+        }
+    });
+}
+
+    console.log("Pie Chart initialized:", pieChart);
+
+    // Dark Mode Toggle
+    function toggleTheme() {
+        let body = document.body;
+        let toggleIcon = document.querySelector(".theme-toggle");
+
+        body.classList.toggle("light-mode");
+
+        if (body.classList.contains("light-mode")) {
+            toggleIcon.textContent = "☀️";
+
+            // Change Pie Chart text to black in light mode
+            if (pieChart) {
+                pieChart.options.plugins.legend.labels.color = "black"; // Legend text color
+                pieChart.options.plugins.tooltip.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Tooltip background
+                pieChart.options.plugins.tooltip.bodyColor = "white"; // Tooltip text color
+                pieChart.update(); // Apply changes
+            }
+        } else {
+            toggleIcon.textContent = "🌙";
+
+            // Change Pie Chart text back to white in dark mode
+            if (pieChart) {
+                pieChart.options.plugins.legend.labels.color = "white"; // Legend text color
+                pieChart.options.plugins.tooltip.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Tooltip background
+                pieChart.options.plugins.tooltip.bodyColor = "white"; // Tooltip text color
+                pieChart.update(); // Apply changes
+            }
+        }
+    }
+
+    // Search & Filter Table
+    function filterTable() {
+        let input = document.getElementById("searchInput").value.toUpperCase();
+        let table = document.getElementById("attackTable");
+        let rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) {
+            let txtValue = rows[i].textContent || rows[i].innerText;
+            rows[i].style.display = txtValue.toUpperCase().indexOf(input) > -1 ? "" : "none";
+        }
+    }
+</script>
+</body>
+</html>
+ 
