@@ -175,13 +175,17 @@ Full deployment steps can be added on request.
 
 ---
 
-## 📊 Dashboard Screenshots
+## 📊 Application Screenshots
 
-```
-src\Home.png
-src\Settings.png
-src\Dashboard.png
-```
+![Home](https://github.com/LAVAN-N/Hacker-Reconnaissance-System/blob/main/src/Home.png)
+
+![Settings](https://github.com/LAVAN-N/Hacker-Reconnaissance-System/blob/main/src/Settings.png)
+
+---
+
+## 📊 Dashboard Screenshot
+
+![Dashboard](https://github.com/LAVAN-N/Hacker-Reconnaissance-System/blob/main/src/Dashboard.png)
 
 ---
 
@@ -247,8 +251,8 @@ Key protections:
 
 ## 👨‍💻 Author
 
-**Lavanyan**
-Cybersecurity & AI Developer
+**Lavanyan** - 
+Cybersecurity & AI Developer - 
 Feel free to connect or open issues in the repository.
 
 ---
